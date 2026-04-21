@@ -7,6 +7,7 @@ const { sanitizeBody, blockScanners, apiLimiter } = require('./middleware/securi
 
 const authRoutes  = require('./routes/auth')
 const userRoutes  = require('./routes/users')
+const adminRoutes = require('./routes/admin')
 
 const app  = express()
 const PORT = process.env.PORT || 4000
@@ -58,6 +59,7 @@ app.use(apiLimiter)
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth',  authRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/admin', adminRoutes)
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))

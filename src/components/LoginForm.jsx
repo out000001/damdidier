@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import InputField from './InputField'
 import { validateEmail } from '../utils/validators'
 import { storeAccessToken } from '../utils/auth'
 
 export default function LoginForm({ onSwitchToRegister }) {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [showPw, setShowPw] = useState(false)
@@ -39,7 +41,9 @@ export default function LoginForm({ onSwitchToRegister }) {
       if (!res.ok) throw new Error(data.message || 'Credenciais inválidas')
       // Access token lives only in memory — never persisted to storage
       storeAccessToken(data.accessToken, data.expiresIn)
-      window.location.href = '/dashboard'
+      // Decode role from JWT payload (no signature verification needed here — server already did it)
+      const payload = JSON.parse(atob(data.accessToken.split('.')[1]))
+      navigate(payload.role === 'admin' ? '/admin' : '/', { replace: true })
     } catch (err) {
       setError(err.message)
     } finally {

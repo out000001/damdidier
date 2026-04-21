@@ -15,7 +15,7 @@ const INITIAL = {
   email: '', telefone: '', whatsapp: '',
   cep: '', rua: '', numero: '', bairro: '', cidade: '', estado: '',
   // step 3
-  tipoSeguro: [], profissao: '', renda: '', possuiSeguro: '', seguradoraAtual: '',
+  profissao: '', renda: '', possuiSeguro: '', seguradoraAtual: '',
   // step 4
   senha: '', confirmarSenha: '', aceiteLGPD: false, receberOfertas: false,
 }
@@ -39,9 +39,7 @@ function validateStep(step, values) {
     if (!values.cidade) errs.cidade = 'Informe a cidade'
     if (!values.estado) errs.estado = 'Selecione o estado'
   }
-  if (step === 3) {
-    if (!values.tipoSeguro || values.tipoSeguro.length === 0) errs.tipoSeguro = 'Selecione ao menos um tipo de seguro'
-  }
+  // step 3 has no required fields
   if (step === 4) {
     if (!isPasswordStrong(values.senha)) errs.senha = 'A senha não atende os requisitos'
     if (values.senha !== values.confirmarSenha) errs.confirmarSenha = 'As senhas não coincidem'
