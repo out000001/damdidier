@@ -76,4 +76,37 @@ app.use((err, _req, res, _next) => {
   res.status(status).json({ message })
 })
 
-app.listen(PORT, () => console.log(`DamDidier API ✓ porta ${PORT}`))
+// ─── Seed admin on first start ────────────────────────────────────────────────
+async function seedAdmin() {
+  const nome  = process.env.ADMIN_NOME
+  const email = process.env.ADMIN_EMAIL
+  const senha = process.env.ADMIN_SENHA
+
+  if (!nome || !email || !senha) return
+
+  try {
+    const pool   = require('./database/pool')
+    const bcrypt = require('bcryptjs')
+
+    const existing = await pool.query(
+      `SELECT id FROM usuarios WHERE role = 'admin' LIMIT 1`
+    )
+    if (existing.rows.length > 0) return  // admin already exists, skip
+
+    const hash = await bcrypt.hash(senha, 12)
+    await pool.query(
+      `INSERT INTO usuarios (nome, cpf, email, senha_hash, role)
+       VALUES ($1, '00000000001', $2, $3, 'admin')
+       ON CONFLICT (email) DO NOTHING`,
+      [nome, email, hash]
+    )
+    console.log(`✓ Admin criado: ${email}`)
+  } catch (err) {
+    console.error('Erro ao criar admin inicial:', err.message)
+  }
+}
+
+app.listen(PORT, async () => {
+  console.log(`DamDidier API ✓ porta ${PORT}`)
+  await seedAdmin()
+})
