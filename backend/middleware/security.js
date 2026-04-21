@@ -59,6 +59,14 @@ exports.blockScanners = (req, res, next) => {
   next()
 }
 
+// ─── Require admin role ───────────────────────────────────────────────────────
+exports.requireAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Acesso restrito a administradores' })
+  }
+  next()
+}
+
 // ─── Require authenticated user owns the resource ────────────────────────────
 exports.requireSelf = (paramName = 'id') => (req, res, next) => {
   const resourceId = parseInt(req.params[paramName], 10)
