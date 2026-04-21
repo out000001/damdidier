@@ -5,7 +5,8 @@ import Step2Contact from './Step2Contact'
 import Step3Insurance from './Step3Insurance'
 import Step4Account from './Step4Account'
 import { useForm } from '../hooks/useForm'
-import { validateCPF, validateEmail, validatePassword, validateDate } from '../utils/validators'
+import { validateCPF, validateEmail, validateDate } from '../utils/validators'
+import { isPasswordStrong, storeAccessToken } from '../utils/auth'
 
 const INITIAL = {
   // step 1
@@ -42,7 +43,7 @@ function validateStep(step, values) {
     if (!values.tipoSeguro || values.tipoSeguro.length === 0) errs.tipoSeguro = 'Selecione ao menos um tipo de seguro'
   }
   if (step === 4) {
-    if (!validatePassword(values.senha)) errs.senha = 'Mínimo 8 caracteres'
+    if (!isPasswordStrong(values.senha)) errs.senha = 'A senha não atende os requisitos'
     if (values.senha !== values.confirmarSenha) errs.confirmarSenha = 'As senhas não coincidem'
     if (!values.aceiteLGPD) errs.aceiteLGPD = 'Aceite os termos para continuar'
   }
@@ -89,11 +90,13 @@ export default function RegisterForm({ onSwitchToLogin }) {
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
+        credentials: 'include',   // receive httpOnly refresh_token cookie
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, aceiteLGPD: String(values.aceiteLGPD) }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || 'Erro ao criar conta')
+      storeAccessToken(data.accessToken, data.expiresIn)
       setSuccess(true)
     } catch (err) {
       setSubmitError(err.message)

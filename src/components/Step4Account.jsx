@@ -1,20 +1,14 @@
 import React, { useState } from 'react'
 import InputField from './InputField'
-import { validateEmail, validatePassword } from '../utils/validators'
+import { passwordRules, isPasswordStrong } from '../utils/auth'
 
 export default function Step4Account({ values, errors, touched, setValue, setError, clearError, handleBlur }) {
   const [showPw, setShowPw] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
-  const pwStrength = (() => {
-    const pw = values.senha || ''
-    let score = 0
-    if (pw.length >= 8) score++
-    if (/[A-Z]/.test(pw)) score++
-    if (/[0-9]/.test(pw)) score++
-    if (/[^A-Za-z0-9]/.test(pw)) score++
-    return score
-  })()
+  const pw    = values.senha || ''
+  const rules = passwordRules(pw)
+  const pwStrength = Object.values(rules).filter(Boolean).length
 
   const strengthLabels = ['', 'Fraca', 'Regular', 'Boa', 'Forte']
   const strengthColors = ['', 'bg-red-400', 'bg-yellow-400', 'bg-blue-400', 'bg-green-500']
@@ -22,7 +16,7 @@ export default function Step4Account({ values, errors, touched, setValue, setErr
   function handleSenha(e) {
     const v = e.target.value
     setValue('senha', v)
-    if (!validatePassword(v)) setError('senha', 'Mínimo 8 caracteres')
+    if (!isPasswordStrong(v)) setError('senha', 'A senha não atende os requisitos abaixo')
     else clearError('senha')
     if (values.confirmarSenha && v !== values.confirmarSenha) setError('confirmarSenha', 'As senhas não coincidem')
     else if (values.confirmarSenha) clearError('confirmarSenha')
@@ -71,9 +65,9 @@ export default function Step4Account({ values, errors, touched, setValue, setErr
             )}
           </button>
         </div>
-        {/* Strength bar */}
+        {/* Strength bar + requirements */}
         {values.senha && (
-          <div className="mt-2 space-y-1">
+          <div className="mt-2 space-y-2">
             <div className="flex gap-1">
               {[1,2,3,4].map(n => (
                 <div key={n} className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${n <= pwStrength ? strengthColors[pwStrength] : 'bg-gray-200'}`}/>
@@ -82,6 +76,24 @@ export default function Step4Account({ values, errors, touched, setValue, setErr
             <p className={`text-xs font-medium ${pwStrength <= 1 ? 'text-red-500' : pwStrength === 2 ? 'text-yellow-600' : pwStrength === 3 ? 'text-blue-600' : 'text-green-600'}`}>
               Senha {strengthLabels[pwStrength]}
             </p>
+            <div className="grid grid-cols-2 gap-1">
+              {[
+                { ok: rules.length,    label: 'Mín. 8 caracteres' },
+                { ok: rules.uppercase, label: '1 letra maiúscula' },
+                { ok: rules.number,    label: '1 número' },
+                { ok: rules.special,   label: '1 caractere especial' },
+              ].map(({ ok, label }) => (
+                <div key={label} className={`flex items-center gap-1 text-xs transition-colors ${ok ? 'text-green-600' : 'text-gray-400'}`}>
+                  <svg className="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    {ok
+                      ? <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                      : <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+                    }
+                  </svg>
+                  {label}
+                </div>
+              ))}
+            </div>
           </div>
         )}
         {touched.senha && errors.senha && <p className="field-error"><span>⚠</span>{errors.senha}</p>}

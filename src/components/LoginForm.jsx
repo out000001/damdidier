@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import InputField from './InputField'
 import { validateEmail } from '../utils/validators'
+import { storeAccessToken } from '../utils/auth'
 
 export default function LoginForm({ onSwitchToRegister }) {
   const [email, setEmail] = useState('')
@@ -30,13 +31,14 @@ export default function LoginForm({ onSwitchToRegister }) {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
+        credentials: 'include',   // receive httpOnly refresh_token cookie
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || 'Credenciais inválidas')
-      if (lembrar) localStorage.setItem('token', data.token)
-      else sessionStorage.setItem('token', data.token)
+      // Access token lives only in memory — never persisted to storage
+      storeAccessToken(data.accessToken, data.expiresIn)
       window.location.href = '/dashboard'
     } catch (err) {
       setError(err.message)
