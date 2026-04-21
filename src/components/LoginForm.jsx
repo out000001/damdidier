@@ -107,7 +107,7 @@ export default function LoginForm({ onSwitchToRegister }) {
   return (
     <div className="animate-fade-in">
       <h3 className="text-xl font-bold text-brand-navy mb-1">Bem-vindo de volta</h3>
-      <p className="text-sm text-gray-500 mb-6">Acesse sua conta para gerenciar seus seguros</p>
+      <p className="text-sm text-gray-500 mb-7">Acesse sua conta para gerenciar seus seguros</p>
 
       {error && (
         <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 flex items-center gap-2 text-red-600 text-sm animate-slide-up">
@@ -118,7 +118,7 @@ export default function LoginForm({ onSwitchToRegister }) {
         </div>
       )}
 
-      <form onSubmit={handleLogin} className="space-y-4">
+      <form onSubmit={handleLogin} className="space-y-5">
         <InputField
           label="Email"
           name="email"
@@ -167,7 +167,7 @@ export default function LoginForm({ onSwitchToRegister }) {
 
       </form>
 
-      <p className="text-center text-sm text-gray-500 mt-6">
+      <p className="text-center text-sm text-gray-500 mt-7">
         Não tem conta?{' '}
         <button onClick={onSwitchToRegister} className="text-brand-yellow font-bold hover:text-brand-yellow-dark transition-colors">
           Cadastre-se grátis

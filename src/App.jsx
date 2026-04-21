@@ -61,9 +61,9 @@ export default function App() {
           </svg>
         </div>
 
-        <div className="relative z-10 flex flex-col h-full min-h-[320px] lg:min-h-screen p-8 lg:p-12 xl:p-16">
+        <div className="relative z-10 flex flex-col h-full min-h-[320px] lg:min-h-screen p-8 lg:p-10 xl:p-12 gap-8">
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-auto">
+          <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-brand-yellow flex items-center justify-center shadow-yellow flex-shrink-0">
               <svg className="w-6 h-6 text-brand-navy" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
@@ -76,7 +76,7 @@ export default function App() {
           </div>
 
           {/* Main headline */}
-          <div className="py-10 lg:py-0 lg:my-auto">
+          <div className="flex-1 flex flex-col justify-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-yellow/15 border border-brand-yellow/25 mb-6">
               <div className="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"/>
               <span className="text-brand-yellow text-xs font-semibold">Confiança há mais de 20 anos</span>
@@ -108,7 +108,7 @@ export default function App() {
           </div>
 
           {/* Stats bar */}
-          <div className="mt-auto pt-8 border-t border-white/10">
+          <div className="pt-6 border-t border-white/10">
             <div className="grid grid-cols-3 gap-4">
               {stats.map(({ value, label }) => (
                 <div key={label} className="text-center">
